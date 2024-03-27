@@ -1,6 +1,6 @@
 # `consult-denote` for GNU Emacs
 
-PROOF-OF-CONCEPT to interface with Denote using Consult:
+PROOF-OF-CONCEPT to integrate Denote with Consult:
 
 - <https://github.com/minad/consult>
 - <https://github.com/protesilaos/denote>
