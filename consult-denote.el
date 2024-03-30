@@ -163,7 +163,7 @@ aforementioned function."
         (add-to-list 'consult-buffer-sources 'consult-denote--buffer-source)
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-link--find-file-prompt :override #'consult-denote-select-file-prompt))
-    ;; TODO 2024-03-27: Remove `'consult-denote--buffer-source' from `'consult-buffer-sources'.
+    (setq consult-buffer-sources (delete 'consult-denote--buffer-source consult-buffer-sources))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
     (advice-remove #'denote-link--find-file-prompt #'consult-denote-select-file-prompt)))
 
