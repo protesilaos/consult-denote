@@ -152,6 +152,12 @@ aforementioned function."
      :items ,#'consult-denote--buffers)
   "Source for `consult-buffer' to list Denote buffers.")
 
+;; TODO 2024-03-30: Cover the `denote-org-extras--outline-prompt'.  It
+;; will be like `consult-outline' in presentation.
+
+;; TODO 2024-03-30: Cover the `denote-silo-extras--directory-prompt'.
+;; It is a regular directory prompt.  Preview the dired buffer.
+
 ;;;###autoload
 (define-minor-mode consult-denote-mode
   "Use Consult in tandem with Denote."
