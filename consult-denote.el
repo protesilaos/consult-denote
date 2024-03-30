@@ -141,15 +141,15 @@ aforementioned function."
          (buffer-list))))
 
 (defvar consult-denote--buffer-source
-    `( :name "Denote buffers"
-       :narrow ?D
-       :category buffer
-       :default t
-       :face consult-denote-buffer
-       :history consult-denote-buffer-history
-       :action ,#'switch-to-buffer
-       :state ,#'consult--buffer-state
-       :items ,#'consult-denote--buffers)
+  `( :name "Denote buffers"
+     :narrow ?D
+     :category buffer
+     :default t
+     :face consult-denote-buffer
+     :history consult-denote-buffer-history
+     :action ,#'switch-to-buffer
+     :state ,#'consult--buffer-state
+     :items ,#'consult-denote--buffers)
   "Source for `consult-buffer' to list Denote buffers.")
 
 ;;;###autoload
