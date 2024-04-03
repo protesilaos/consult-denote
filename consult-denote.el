@@ -103,16 +103,14 @@ aforementioned function."
   "Call `consult-denote-grep-command' in the variable `denote-directory'."
   (declare (interactive-only t))
   (interactive)
-  (let ((default-directory denote-directory))
-    (funcall-interactively consult-denote-grep-command)))
+  (funcall-interactively consult-denote-grep-command (denote-directory)))
 
 ;;;###autoload
 (defun consult-denote-find ()
   "Call `consult-denote-find-command' in the variable `denote-directory'."
   (declare (interactive-only t))
   (interactive)
-  (let ((default-directory denote-directory))
-    (funcall-interactively consult-denote-find-command)))
+  (funcall-interactively consult-denote-find-command (denote-directory)))
 
 ;;;###autoload
 (defun consult-denote-open ()
