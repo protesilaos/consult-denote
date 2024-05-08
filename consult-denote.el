@@ -55,7 +55,8 @@
 The FILES-MATCHING-REGEXP and PROMPT-TEXT have the same meaning as the
 aforementioned function."
   (when-let ((all-files (denote-directory-files files-matching-regexp :omit-current)))
-    (let* ((common-parent-directory
+    (let* ((default-directory (denote-directory))
+           (common-parent-directory
             (let ((common-prefix (try-completion "" all-files)))
               (if (> (length common-prefix) 0)
                   (file-name-directory common-prefix))))
@@ -72,18 +73,19 @@ aforementioned function."
            (_ (when included-cpd
                 (setq substrings (cons "./" substrings))))
            (new-collection (denote--completion-table 'file substrings))
-           (relname
-            (let ((default-directory (denote-directory)))
-              (consult--read new-collection
-                             :state (consult--file-preview)
-                             :prompt prompt
-                             :history 'denote-file-history)))
-           (absname (expand-file-name relname common-parent-directory)))
-      ;; NOTE 2024-02-29: This delete and add feels awkward.  I wish
-      ;; we could tell `completing-read' to just leave this up to us.
-      (setq denote-file-history (delete relname denote-file-history))
-      (add-to-history 'denote-file-history absname)
-      absname)))
+           (input
+            (consult--read new-collection ; We populate the history ourselves because we process the input
+                           :state (consult--file-preview)
+                           :prompt prompt))
+           ;; FIXME 2024-05-08: Is there some elegant way to do this?
+           (filename (with-temp-buffer
+                       (insert input)
+                       (completion-in-region (point-min) (point-max) new-collection)
+                       (buffer-string))))
+      (when filename
+        (setq denote-file-history (delete input denote-file-history))
+        (add-to-history 'denote-file-history filename))
+      filename)))
 
 (defun consult-denote-select-file-prompt (files)
   "Prompt for Denote file among FILES."
