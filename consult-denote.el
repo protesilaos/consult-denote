@@ -73,8 +73,9 @@ aforementioned function."
            (_ (when included-cpd
                 (setq substrings (cons "./" substrings))))
            (new-collection (denote--completion-table 'file substrings))
+           ;; We populate the history ourselves because we process the input.
            (input
-            (consult--read new-collection ; We populate the history ourselves because we process the input
+            (consult--read new-collection
                            :state (consult--file-preview)
                            :prompt prompt))
            ;; FIXME 2024-05-08: Is there some elegant way to do this?
