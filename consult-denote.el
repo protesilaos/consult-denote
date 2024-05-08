@@ -36,7 +36,7 @@
   "Simple notes with an efficient file-naming scheme."
   :group 'files
   :group 'minibuffer
-  :link '(url-link :tag "Homepage" "https://protesilaos.com/emacs/denote"))
+  :link '(url-link :tag "Homepage" " https://github.com/protesilaos/consult-denote"))
 
 ;;;; User options
 
