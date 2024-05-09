@@ -110,15 +110,19 @@ aforementioned function."
             (consult--read new-collection
                            :state (consult--file-preview)
                            :prompt prompt))
-           ;; FIXME 2024-05-08: Is there some elegant way to do this?
            (filename (with-temp-buffer
                        (insert input)
                        (completion-in-region (point-min) (point-max) new-collection)
                        (buffer-string))))
-      (when filename
-        (setq denote-file-history (delete input denote-file-history))
-        (add-to-history 'denote-file-history filename))
-      filename)))
+      (setq denote-file-prompt-latest-input input)
+      ;; We want to return the user's input verbatim if it does not
+      ;; match a file uniquely.
+      (if (denote-file-has-identifier-p (expand-file-name filename (denote-directory)))
+          (progn
+            (setq denote-file-history (delete input denote-file-history))
+            (add-to-history 'denote-file-history filename)
+            filename)
+        input))))
 
 (defun consult-denote-select-file-prompt (files)
   "Prompt for Denote file among FILES."
