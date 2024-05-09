@@ -162,6 +162,7 @@ aforementioned function."
   '((t :inherit font-lock-string-face))
   "Face for Denote buffers used `consult-buffer'.")
 
+;; TODO 2024-05-09: Review suggestion by Philip Kaludercic to use `match-buffers'.
 (defun consult-denote--buffers ()
   "Return file names of Denote buffers."
   (delq nil
