@@ -151,13 +151,6 @@ aforementioned function."
   (interactive)
   (funcall-interactively consult-denote-find-command (denote-directory)))
 
-;;;###autoload
-(defun consult-denote-open ()
-  "Find a file in the variable `denote-directory'."
-  (declare (interactive-only t))
-  (interactive)
-  (find-file (consult-denote-file-prompt)))
-
 ;;;; Integrate with denote.el
 
 (defvar consult-denote-buffer-history nil)
