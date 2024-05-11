@@ -124,7 +124,7 @@ aforementioned function."
             filename)
         input))))
 
-(defun consult-denote-select-file-prompt (files)
+(defun consult-denote-select-linked-file-prompt (files)
   "Prompt for Denote file among FILES."
   (let* ((default-directory denote-directory)
          (file-names (mapcar #'denote-get-file-name-relative-to-denote-directory files)))
@@ -199,10 +199,10 @@ aforementioned function."
       (progn
         (add-to-list 'consult-buffer-sources 'consult-denote--buffer-source)
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
-        (advice-add #'denote-link--find-file-prompt :override #'consult-denote-select-file-prompt))
+        (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt))
     (setq consult-buffer-sources (delete 'consult-denote--buffer-source consult-buffer-sources))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
-    (advice-remove #'denote-link--find-file-prompt #'consult-denote-select-file-prompt)))
+    (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)))
 
 (provide 'consult-denote)
 ;;; consult-denote.el ends here
