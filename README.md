@@ -25,11 +25,13 @@ The purpose of `consult-denote` is as follows:
    Customise which command they call by modifying the user options
    `consult-denote-grep-command` and `consult-denote-find-command`.
 
-3. **Include a Denote "source" for `consult-buffer`:** This is also
-   part of the `consult-denote-mode`. It adds a new heading/group to
-   the interface of the `consult-buffer` command which lists all the
-   buffers that visit Denote files. Narrow to this source by typing
-   `D` (capital letter) followed by space in at the empty prompt.
+3. **Include Denote "sources" for `consult-buffer`:** This is also
+   part of the `consult-denote-mode`. It adds new headings/groups to
+   the interface of the `consult-buffer` command. Those lists (i) the
+   buffers that visit Denote files, (ii) the subdirectories of the
+   `denote-directory`, and (iii) the silos listed in the value of the
+   user option `denote-silo-extras-directories` (for those who opt in
+   to that extension).
 
 In the future we may use other features of Consult, based on user
 feedback.
