@@ -74,11 +74,13 @@
 
 (defcustom consult-denote-grep-command #'consult-grep
   "Consult-powered Grep command to use for `consult-denote-grep'."
-  :type 'function)
+  :type 'function
+  :package-version '(consult-denote . "0.1.0"))
 
 (defcustom consult-denote-find-command #'consult-find
   "Consult-powered Find command to use for `consult-denote-find'."
-  :type 'function)
+  :type 'function
+  :package-version '(consult-denote . "0.1.0"))
 
 ;;;; Functions
 
@@ -157,7 +159,8 @@ aforementioned function."
 
 (defface consult-denote-buffer
   '((t :inherit font-lock-string-face))
-  "Face for Denote buffers used `consult-buffer'.")
+  "Face for Denote buffers used `consult-buffer'."
+  :package-version '(consult-denote . "0.1.0"))
 
 ;; TODO 2024-05-09: Review suggestion by Philip Kaludercic to use `match-buffers'.
 (defun consult-denote--buffers ()
