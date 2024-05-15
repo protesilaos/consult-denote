@@ -86,47 +86,37 @@
 
 ;;;; Functions
 
-(defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text)
+(defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match)
   "A Consult-powered equivalent of `denote-file-prompt'.
-The FILES-MATCHING-REGEXP and PROMPT-TEXT have the same meaning as the
-aforementioned function."
-  (when-let ((all-files (denote-directory-files files-matching-regexp :omit-current)))
-    (let* ((default-directory (denote-directory))
-           (common-parent-directory
-            (let ((common-prefix (try-completion "" all-files)))
-              (if (> (length common-prefix) 0)
-                  (file-name-directory common-prefix))))
-           (cpd-length (length common-parent-directory))
-           (prompt-prefix (or prompt-text "Select FILE"))
-           (prompt (if (zerop cpd-length)
-                       (format "%s: " prompt-prefix)
-                     (format "%s in %s: " prompt-prefix common-parent-directory)))
-           (included-cpd (when (member common-parent-directory all-files)
-                           (setq all-files
-                                 (delete common-parent-directory all-files))
-                           t))
-           (substrings (mapcar (lambda (s) (substring s cpd-length)) all-files))
-           (_ (when included-cpd
-                (setq substrings (cons "./" substrings))))
-           (new-collection (denote--completion-table 'file substrings))
-           ;; We populate the history ourselves because we process the input.
-           (input
-            (consult--read new-collection
-                           :state (consult--file-preview)
-                           :prompt prompt))
-           (filename (with-temp-buffer
-                       (insert input)
-                       (completion-in-region (point-min) (point-max) new-collection)
-                       (buffer-string))))
+
+With optional FILES-MATCHING-REGEXP, filter the candidates per
+the given regular expression.
+
+With optional PROMPT-TEXT, use it instead of the default call to
+select a file.
+
+With optional NO-REQUIRE-MATCH, accept the given input as-is.
+
+Return the absolute path to the matching file."
+  (let* ((relative-files (mapcar #'denote-get-file-name-relative-to-denote-directory
+                                 (denote-directory-files files-matching-regexp :omit-current)))
+         (prompt (format "%s in %s: " (or prompt-text "Select FILE") (denote-directory)))
+         (default-directory (denote-directory)) ; needed for the preview
+         (input (consult--read
+                 (denote--completion-table 'file relative-files)
+                 :state (consult--file-preview)
+                 :require-match (unless no-require-match :require-match)
+                 :prompt prompt))
+         (absolute-file (concat (denote-directory) input)))
+    ;; NOTE: This block is executed when no-require-match is t. It is useful
+    ;; for commands such as `denote-open-or-create` or similar.
+    (unless (file-exists-p absolute-file)
       (setq denote-file-prompt-latest-input input)
-      ;; We want to return the user's input verbatim if it does not
-      ;; match a file uniquely.
-      (if (denote-file-has-identifier-p (expand-file-name filename (denote-directory)))
-          (progn
-            (setq denote-file-history (delete input denote-file-history))
-            (add-to-history 'denote-file-history filename)
-            filename)
-        input))))
+      (setq denote-file-history (delete input denote-file-history)))
+    ;; NOTE: We must always return an absolute path, even if it does not
+    ;; exist, because callers expect one.  They handle a non-existent file
+    ;; appropriately.
+    absolute-file))
 
 (defun consult-denote-select-linked-file-prompt (files)
   "Prompt for Denote file among FILES."
