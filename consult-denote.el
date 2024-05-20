@@ -159,7 +159,6 @@ Return the absolute path to the matching file."
   "Face for Denote directories used in `consult-buffer'."
   :package-version '(consult-denote . "0.1.0"))
 
-;; TODO 2024-05-09: Review suggestion by Philip Kaludercic to use `match-buffers'.
 (defun consult-denote--buffers ()
   "Return file names of Denote buffers."
   (delq nil
