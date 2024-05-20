@@ -170,7 +170,7 @@ Return the absolute path to the matching file."
              (buffer-name buffer)))
          (buffer-list))))
 
-(defvar consult-denote--buffer-source
+(defvar consult-denote-buffer-source
   `( :name "Denote buffers"
      :narrow ?D
      :category buffer
@@ -182,7 +182,7 @@ Return the absolute path to the matching file."
      :items ,#'consult-denote--buffers)
   "Source for `consult-buffer' to list Denote buffers.")
 
-(defvar consult-denote--subdirectory-source
+(defvar consult-denote-subdirectory-source
   `( :name "Denote subdirectories"
      :narrow ?S
      :category file
@@ -194,11 +194,11 @@ Return the absolute path to the matching file."
      :items ,#'denote-directory-subdirectories)
   "Source for `consult-buffer' to list Denote subdirectories.")
 
-(defvar consult-denote--silo-source nil
+(defvar consult-denote-silo-source nil
   "Source for `consult-buffer' to list Denote silos.")
 
 (with-eval-after-load 'denote-silo-extras
-  (setq consult-denote--silo-source
+  (setq consult-denote-silo-source
     `( :name "Denote silos"
        :narrow ?L
        :category file
@@ -223,14 +223,14 @@ Return the absolute path to the matching file."
       ;; We will eventually have a denote-file-prompt-function and
       ;; `funcall' it, but this is okay for now.  Same for all prompts
       (progn
-        (add-to-list 'consult-buffer-sources 'consult-denote--subdirectory-source :append)
-        (add-to-list 'consult-buffer-sources 'consult-denote--silo-source :append)
-        (add-to-list 'consult-buffer-sources 'consult-denote--buffer-source :append)
+        (add-to-list 'consult-buffer-sources 'consult-denote-subdirectory-source :append)
+        (add-to-list 'consult-buffer-sources 'consult-denote-silo-source :append)
+        (add-to-list 'consult-buffer-sources 'consult-denote-buffer-source :append)
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt))
-    (setq consult-buffer-sources (delq 'consult-denote--subdirectory-source consult-buffer-sources))
-    (setq consult-buffer-sources (delq 'consult-denote--silo-source consult-buffer-sources))
-    (setq consult-buffer-sources (delq 'consult-denote--buffer-source consult-buffer-sources))
+    (setq consult-buffer-sources (delq 'consult-denote-subdirectory-source consult-buffer-sources))
+    (setq consult-buffer-sources (delq 'consult-denote-silo-source consult-buffer-sources))
+    (setq consult-buffer-sources (delq 'consult-denote-buffer-source consult-buffer-sources))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)))
 
