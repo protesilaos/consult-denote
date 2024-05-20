@@ -84,6 +84,22 @@
   :type 'function
   :package-version '(consult-denote . "0.1.0"))
 
+(defconst consult-denote-all-buffer-sources
+  '(consult-denote-buffer-source
+    consult-denote-subdirectory-source
+    consult-denote-silo-source)
+  "All the Denote sources for `consult-buffer'.")
+
+(defcustom consult-denote-buffer-sources consult-denote-all-buffer-sources
+  "Sources to add to the `consult-buffer' interface."
+  ;; FIXME 2024-05-20: I must be missing something obvious because any
+  ;; symbol I give it is accepted.
+  :type '(repeat
+          (symbol :match (lambda (_widget value)
+                           (memq value consult-denote-all-buffer-sources))
+                  :type-error "the value is not among `consult-denote-all-buffer-sources'"))
+  :package-version '(consult-denote . "0.1.0"))
+
 ;;;; Functions
 
 (defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match)
@@ -223,14 +239,12 @@ Return the absolute path to the matching file."
       ;; We will eventually have a denote-file-prompt-function and
       ;; `funcall' it, but this is okay for now.  Same for all prompts
       (progn
-        (add-to-list 'consult-buffer-sources 'consult-denote-subdirectory-source :append)
-        (add-to-list 'consult-buffer-sources 'consult-denote-silo-source :append)
-        (add-to-list 'consult-buffer-sources 'consult-denote-buffer-source :append)
+        (dolist (source consult-denote-buffer-sources)
+          (add-to-list 'consult-buffer-sources source :append))
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt))
-    (setq consult-buffer-sources (delq 'consult-denote-subdirectory-source consult-buffer-sources))
-    (setq consult-buffer-sources (delq 'consult-denote-silo-source consult-buffer-sources))
-    (setq consult-buffer-sources (delq 'consult-denote-buffer-source consult-buffer-sources))
+    (dolist (source consult-denote-buffer-sources)
+      (setq consult-buffer-sources (delq source consult-buffer-sources)))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)))
 
