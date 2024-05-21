@@ -97,7 +97,7 @@
   :type '(repeat
           (symbol :match (lambda (_widget value)
                            (memq value consult-denote-all-buffer-sources))
-                  :type-error "the value is not among `consult-denote-all-buffer-sources'"))
+                  :type-error "The value is not among `consult-denote-all-buffer-sources'"))
   :package-version '(consult-denote . "0.1.0"))
 
 ;;;; Functions
