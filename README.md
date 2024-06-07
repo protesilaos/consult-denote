@@ -1,5 +1,11 @@
 # `consult-denote` for GNU Emacs
 
+[ NOTE 2024-06-07: The first stable version of this package will be
+  released together with Denote version 3.0.0. Probably before the end
+  of June 2024. ]
+
+* * *
+
 Integrate the `denote` and `consult` packages:
 
 - [Denote](https://github.com/protesilaos/denote) : A file-naming
