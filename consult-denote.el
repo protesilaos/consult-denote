@@ -146,6 +146,17 @@ Return the absolute path to the matching file."
      :state (consult--file-preview)
      :history 'denote-link-find-file-history)))
 
+(defun consult-denote-silo-directory-prompt ()
+  "Like the `denote-silo-extras-directory-prompt' with Consult preview."
+  (let ((default (car denote-silo-extras-directory-history)))
+    (consult--read
+     (denote--completion-table 'file denote-silo-extras-directories)
+     :state (consult--file-preview)
+     :require-match t
+     :prompt (format-prompt "Select a silo" default)
+     :default default
+     :history 'denote-silo-extras-directory-history)))
+
 ;; FIXME 2024-07-03: We need a :state function that previews the
 ;; current line in the given buffer and then restores the window
 ;; configuration.
@@ -243,9 +254,6 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
        :state ,#'consult--file-state
        :items ,denote-silo-extras-directories)))
 
-;; TODO 2024-03-30: Cover the `denote-silo-extras--directory-prompt'.
-;; It is a regular directory prompt.  Preview the dired buffer.
-
 ;;;###autoload
 (define-minor-mode consult-denote-mode
   "Use Consult in tandem with Denote."
@@ -257,14 +265,16 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
         (dolist (source consult-denote-buffer-sources)
           (add-to-list 'consult-buffer-sources source :append))
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
-        (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt))
+        (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt)
         ;; See FIXME where this function is defined.
         (advice-add #'denote-org-extras-outline-prompt :override #'consult-denote-outline-prompt)
+        (advice-add #'denote-silo-extras-directory-prompt :override #'consult-denote-silo-directory-prompt))
     (dolist (source consult-denote-buffer-sources)
       (setq consult-buffer-sources (delq source consult-buffer-sources)))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
-    (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)))
+    (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-org-extras-outline-prompt #'consult-denote-outline-prompt)
+    (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)))
 
 (provide 'consult-denote)
 ;;; consult-denote.el ends here
