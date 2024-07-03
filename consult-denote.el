@@ -6,7 +6,7 @@
 ;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://github.com/protesilaos/consult-denote
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "28.1") (denote "2.3.0") (consult "1.4"))
+;; Package-Requires: ((emacs "28.1") (denote "3.0.2") (consult "1.7"))
 
 ;; This file is NOT part of GNU Emacs.
 
