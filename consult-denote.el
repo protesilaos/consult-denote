@@ -190,6 +190,8 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   (interactive)
   (funcall-interactively consult-denote-find-command (denote-directory)))
 
+(consult-customize consult-denote-find :state (consult--file-preview))
+
 ;;;; Integrate with denote.el
 
 (defvar consult-denote-buffer-history nil)
