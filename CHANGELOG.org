@@ -13,7 +13,7 @@ the manual: <https://protesilaos.com/emacs/consult-denote>.
 
 #+toc: headlines 1 insert TOC here, with one headline level
 
-* Version 0.2.0 on 2024-09-10
+* Version 0.2.0 on 2024-09-15
 :PROPERTIES:
 :CUSTOM_ID: h:e3515d33-18cd-401a-8e37-3f8d55aed23b
 :END:
