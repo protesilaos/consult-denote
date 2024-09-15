@@ -136,6 +136,17 @@ Return the absolute path to the matching file."
     absolute-file))
 
 (defun consult-denote-select-linked-file-prompt (files)
+  "Prompt for linked file among FILES."
+  (let ((file-names (mapcar #'denote-get-file-name-relative-to-denote-directory
+                            files)))
+    (consult--read
+     (denote--completion-table 'file file-names)
+     :state (consult--file-preview)
+     :require-match t
+     :history 'denote-link-find-file-history
+     :prompt "Find linked file")))
+
+(defun consult-denote-select-linked-file-prompt (files)
   "Prompt for Denote file among FILES."
   (let* ((default-directory denote-directory)
          (file-names (mapcar #'denote-get-file-name-relative-to-denote-directory files)))
@@ -268,12 +279,14 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
           (add-to-list 'consult-buffer-sources source :append))
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt)
+        (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt)
         ;; See FIXME where this function is defined.
         (advice-add #'denote-org-extras-outline-prompt :override #'consult-denote-outline-prompt)
         (advice-add #'denote-silo-extras-directory-prompt :override #'consult-denote-silo-directory-prompt))
     (dolist (source consult-denote-buffer-sources)
       (setq consult-buffer-sources (delq source consult-buffer-sources)))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
+    (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-org-extras-outline-prompt #'consult-denote-outline-prompt)
     (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)))
