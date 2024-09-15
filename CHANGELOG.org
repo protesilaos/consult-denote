@@ -1,0 +1,101 @@
+#+title: Change log of consult-denote
+#+author: Protesilaos Stavrou
+#+email: info@protesilaos.com
+#+language: en
+#+options: ':t toc:nil author:t email:t num:t
+#+startup: content
+
+This document contains the release notes for each tagged commit on the
+project's main git repository: <https://github.com/protesilaos/consult-denote>.
+
+The newest release is at the top.  For further details, please consult
+the manual: <https://protesilaos.com/emacs/consult-denote>.
+
+#+toc: headlines 1 insert TOC here, with one headline level
+
+* Version 0.2.0 on 2024-09-10
+:PROPERTIES:
+:CUSTOM_ID: h:e3515d33-18cd-401a-8e37-3f8d55aed23b
+:END:
+
+** The command ~consult-denote-find~ always previews files
+:PROPERTIES:
+:CUSTOM_ID: h:cbcd61da-e777-4634-b578-ed2e7df2cf60
+:END:
+
+This command will search for matching file names through the
+~denote-directory~. It now previews the selected file in the
+minibuffer, whereas before the preview had to be triggered manually.
+
+Remember that you can customise what command is actually called, per
+~consult-denote-find-command~ (default is ~consult-find~, with
+~consult-fd~ as another likely choice).
+
+** The commands ~denote-find-link~ and ~denote-find-backlink~ have previews
+:PROPERTIES:
+:CUSTOM_ID: h:8881cb08-7be0-49dd-a6d2-dfe557e2bf48
+:END:
+
+This is relevant when ~consult-denote-mode~ is enabled. This mode
+makes changes in the background to make all file-related Denote
+minibuffer prompts have the preview functionality. The idea is that
+users keep the same workflow and overall style, while benefiting from
+the added features.
+
+Thanks to hapst3r for suggesting something similar which made me
+realise those commands were not actually covered by ~consult-denote-mode~.
+
+[ If there are more Denote commands that you think could benefit from
+  ~consult-denote-mode~ but are not covered yet, please let me know. ]
+
+** The package now has a manual and change log
+:PROPERTIES:
+:CUSTOM_ID: h:823729f2-ee86-4096-81ba-bf99d23832da
+:END:
+
+You can find the relevant source files in consult-denote.git and their
+web pages on my website.
+
++ Official manual: <https://protesilaos.com/emacs/consult-denote>
++ Change log: <https://protesilaos.com/emacs/consult-denote-changelog>
+
+* Version 0.1.0 on 2024-07-03
+:PROPERTIES:
+:CUSTOM_ID: h:bf9a57b4-ec21-44ef-9d13-b5ea36804338
+:END:
+
+The ~consult-denote~ provides glue code to integrate ~denote~ with
+Daniel Mendler's ~consult~ package. The idea is to enhance minibuffer
+interactions, such as by providing a preview of the file-to-linked or
+opened and by adding more sources to the ~consult-buffer~ command.
+Interested users can enable the ~consult-denote-mode~ to get started.
+
+** Familiar minibuffer prompts
+:PROPERTIES:
+:CUSTOM_ID: h:c4a35a12-92e4-4f29-9fbb-30c61039511d
+:END:
+
+~consult-denote~ is designed to enhance all relevant Denote prompts
+with whatever extras Consult provides, such as the preview facility.
+These Consult-powered minibuffer prompts will still follow the same
+patterns of interaction as core Denote: they will never use a
+profoundly different presentation.
+
+** Customise what ~consult-buffer~ shows from Denote
+:PROPERTIES:
+:CUSTOM_ID: h:4fba75ca-7e9c-42b7-a0b0-fa07536c4621
+:END:
+
+The extra sources added to the ~consult-buffer~ command are controlled
+by the user option ~consult-denote-buffer-sources~. Its default value
+is the list of sources called ~consult-denote-all-buffer-sources~.
+
+** Developed in tandem with Denote
+:PROPERTIES:
+:CUSTOM_ID: h:108c3c30-ad82-4349-b6e7-998594c79f0e
+:END:
+
+My goal with this package is to keep it as close to Denote as
+possible. If the community wants a new feature, we can discuss whether
+a variant of it makes sense for ~denote~ before considering its
+inclusion in ~consult-denote~.
