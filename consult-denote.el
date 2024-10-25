@@ -180,8 +180,8 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
      (denote--completion-table-no-sort 'imenu (denote-org-extras--get-outline current-file))
      :state (lambda (_action candidate)
               (with-current-buffer (current-buffer)
-                (when-let ((_ candidate)
-                           (line (string-to-number (car (split-string candidate)))))
+                (when-let* ((_ candidate)
+                            (line (string-to-number (car (split-string candidate)))))
                   (goto-line line (get-file-buffer current-file)))))
      :prompt (format "Select heading inside `%s': " (propertize (file-name-nondirectory current-file) 'face 'denote-faces-prompt-current-name))
      :require-match t)))
@@ -223,9 +223,9 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   (delq nil
         (mapcar
          (lambda (buffer)
-           (when-let ((file (buffer-file-name buffer))
-                      ((buffer-live-p buffer))
-                      ((denote-filename-is-note-p file)))
+           (when-let* ((file (buffer-file-name buffer))
+                       ((buffer-live-p buffer))
+                       ((denote-filename-is-note-p file)))
              (buffer-name buffer)))
          (buffer-list))))
 
