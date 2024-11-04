@@ -147,17 +147,6 @@ Return the absolute path to the matching file."
      :history 'denote-link-find-file-history
      :prompt "Find linked file")))
 
-(defun consult-denote-select-linked-file-prompt (files)
-  "Prompt for Denote file among FILES."
-  (let* ((default-directory denote-directory)
-         (file-names (mapcar #'denote-get-file-name-relative-to-denote-directory files)))
-    (consult--read
-     (denote--completion-table 'file file-names)
-     :prompt "Select FILE: "
-     :require-match t
-     :state (consult--file-preview)
-     :history 'denote-link-find-file-history)))
-
 (defun consult-denote-silo-directory-prompt ()
   "Like the `denote-silo-extras-directory-prompt' with Consult preview."
   (let ((default (car denote-silo-extras-directory-history)))
@@ -291,6 +280,30 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-org-extras-outline-prompt #'consult-denote-outline-prompt)
     (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)))
+
+;;;; Alternatives to Denote functions
+
+(defun consult-denote--subdirectory-p (directory)
+  "Return non-nil if DIRECTORY is a subdirectory of variable `denote-directory'."
+  (member directory (denote-directory-subdirectories)))
+
+(defun consult-denote--get-subdir-or-root ()
+  "Return current subdirectory of the variable `denote-directory'.
+If that is not available, return the value of variable
+`denote-directory'."
+  (if-let* ((current-dir (expand-file-name default-directory))
+            ((consult-denote--subdirectory-p current-dir)))
+      current-dir
+    (denote-directory)))
+
+(defun consult-denote--get-file-with-find (&optional directory)
+  "Use Consult to find a file in the variable `denote-directory'.
+With optional DIRECTORY, search that directory instead."
+  (let ((dir (or directory (consult-denote--get-subdir-or-root))))
+    (pcase-let* ((`(,prompt ,paths ,dir) (consult--directory-prompt "Find" dir))
+                 (default-directory dir)
+                 (builder (consult--find-make-builder paths)))
+      (consult--find prompt builder nil))))
 
 (provide 'consult-denote)
 ;;; consult-denote.el ends here
