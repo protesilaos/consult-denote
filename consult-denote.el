@@ -75,6 +75,16 @@
 
 ;;;; User options
 
+(defcustom consult-denote-pretty-file-prompt nil
+  "When non-nil show a \"prettier\" view of files.
+Make the file prompt include the Denote file name components with more
+spacing between them plus some extra colouration.
+
+When the value is nil (the default), show Denote file names the way they
+appear on the file system."
+  :type 'boolean
+  :package-version '(consult-denote . "0.3.0"))
+
 (defcustom consult-denote-grep-command #'consult-grep
   "Consult-powered Grep command to use for `consult-denote-grep'."
   :type 'function
@@ -103,6 +113,44 @@
 
 ;;;; Functions
 
+(defun consult-denote--pretty-file-candidate (candidate)
+  "Prettify file CANDIDATE according to `consult-denote-pretty-file-prompt'."
+  ;; NOTE 2024-11-19: We do not want to read from the front matter of
+  ;; CANDIDATE because this will be too slow at scale.  I think if we
+  ;; get something that is "good enough", then we are okay.
+  (propertize candidate 'display
+              (concat
+               (if-let* ((title (denote-retrieve-filename-title candidate)))
+                   (concat "--" (propertize title 'face 'denote-faces-title))
+                 (denote-retrieve-filename-identifier candidate))
+               (if-let* ((keywords (denote-retrieve-filename-keywords candidate)))
+                   (concat
+                    (propertize " " 'display `(space :align-to 80))
+                    "__"
+                    (propertize keywords 'face 'denote-faces-keywords))
+                 "")
+               (if-let* ((signature (denote-retrieve-filename-signature candidate)))
+                   (concat
+                    (propertize " " 'display `(space :align-to 140))
+                    "=="
+                    (propertize signature 'face 'denote-faces-signature))
+                 ""))))
+
+(defun consult-denote--get-file-completion-table (&optional files-matching-regexp prettify)
+  "Return file completion table according to `consult-denote-pretty-file-prompt'.
+With optional FILES-MATCHING-REGEXP, limit the files to those matching
+the given regular expression (per `denote-directory-files').
+
+With optional PRETTIFY, use a more human-readable format for the
+candidates (though they still are absolute file paths behind the
+scenes)."
+  (let ((files (denote-directory-files files-matching-regexp :omit-current)))
+    (denote--completion-table
+     'file
+     (if prettify
+         (mapcar #'consult-denote--pretty-file-candidate files)
+       (mapcar #'denote-get-file-name-relative-to-denote-directory files)))))
+
 (defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match)
   "A Consult-powered equivalent of `denote-file-prompt'.
 
@@ -115,26 +163,27 @@ select a file.
 With optional NO-REQUIRE-MATCH, accept the given input as-is.
 
 Return the absolute path to the matching file."
-  (let* ((relative-files (mapcar #'denote-get-file-name-relative-to-denote-directory
-                                 (denote-directory-files files-matching-regexp :omit-current)))
-         (prompt (format "%s in %s: " (or prompt-text "Select FILE") (denote-directory)))
-         (default-directory (denote-directory)) ; needed for the preview
+  (let* ((default-directory (denote-directory)) ; needed for the preview
+         (prompt (format "%s in %s: " (or prompt-text "Select FILE") default-directory))
+         (prettify consult-denote-pretty-file-prompt)
          (input (consult--read
-                 (denote--completion-table 'file relative-files)
+                 (consult-denote--get-file-completion-table files-matching-regexp prettify)
                  :state (consult--file-preview)
                  :require-match (unless no-require-match :require-match)
                  :history 'denote-file-history
                  :prompt prompt))
-         (absolute-file (concat (denote-directory) input)))
+         (file (if prettify
+                   input
+                 (concat (denote-directory) input))))
     ;; NOTE: This block is executed when no-require-match is t. It is useful
     ;; for commands such as `denote-open-or-create` or similar.
-    (unless (file-exists-p absolute-file)
+    (unless (file-exists-p file)
       (setq denote-file-prompt-latest-input input)
       (setq denote-file-history (delete input denote-file-history)))
     ;; NOTE: We must always return an absolute path, even if it does not
     ;; exist, because callers expect one.  They handle a non-existent file
     ;; appropriately.
-    absolute-file))
+    file))
 
 (defun consult-denote-select-linked-file-prompt (files)
   "Prompt for linked file among FILES."
