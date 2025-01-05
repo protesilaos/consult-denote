@@ -257,6 +257,15 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
        :state ,#'consult--file-state
        :items ,denote-silo-extras-directories)))
 
+(defun consult-denote--get-non-nil-buffer-sources ()
+  "Return all non-nil `consult-denote-buffer-sources'."
+  (delq nil
+        (mapcar
+         (lambda (var)
+           (unless (null (symbol-value var))
+             var))
+         consult-denote-buffer-sources)))
+
 ;;;###autoload
 (define-minor-mode consult-denote-mode
   "Use Consult in tandem with Denote."
@@ -265,7 +274,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
       ;; We will eventually have a denote-file-prompt-function and
       ;; `funcall' it, but this is okay for now.  Same for all prompts
       (progn
-        (dolist (source consult-denote-buffer-sources)
+        (dolist (source (consult-denote--get-non-nil-buffer-sources))
           (add-to-list 'consult-buffer-sources source :append))
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt)
