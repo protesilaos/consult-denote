@@ -242,9 +242,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
      :items ,#'denote-directory-subdirectories)
   "Source for `consult-buffer' to list Denote subdirectories.")
 
-;; This must not be nil, as `:items' is mandatory (`plist-member'),
-;; even if its value is nil.
-(defvar consult-denote-silo-source '(:items nil)
+(defvar consult-denote-silo-source nil
   "Source for `consult-buffer' to list Denote silos.")
 
 (with-eval-after-load 'denote-silo-extras
