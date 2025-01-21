@@ -115,8 +115,11 @@ select a file.
 With optional NO-REQUIRE-MATCH, accept the given input as-is.
 
 Return the absolute path to the matching file."
-  (let* ((relative-files (mapcar #'denote-get-file-name-relative-to-denote-directory
-                                 (denote-directory-files files-matching-regexp :omit-current)))
+  (let* ((relative-files (mapcar
+                          #'denote-get-file-name-relative-to-denote-directory
+                          (denote-directory-files
+                           (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
+                           :omit-current)))
          (prompt (format "%s in %s: " (or prompt-text "Select FILE") (denote-directory)))
          (default-directory (denote-directory)) ; needed for the preview
          (input (consult--read
