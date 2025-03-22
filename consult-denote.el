@@ -70,8 +70,11 @@
   "Simple notes with an efficient file-naming scheme."
   :group 'files
   :group 'minibuffer
+  :group 'denote
+  :link '(info-link "(denote) Top")
   :link '(info-link "(consult-denote) Top")
-  :link '(url-link :tag "Homepage" "https://protesilaos.com/emacs/consult-denote"))
+  :link '(url-link :tag "Denote homepage" "https://protesilaos.com/emacs/denote")
+  :link '(url-link :tag "Consult Denote homepage" "https://protesilaos.com/emacs/consult-denote"))
 
 ;;;; User options
 
