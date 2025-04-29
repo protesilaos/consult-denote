@@ -131,7 +131,7 @@ Return the absolute path to the matching file."
                  :require-match (unless no-require-match :require-match)
                  :history 'denote-file-history
                  :prompt prompt))
-         (absolute-file (concat (denote-directory) input)))
+         (absolute-file (expand-file-name input (denote-directory))))
     ;; NOTE: This block is executed when no-require-match is t. It is useful
     ;; for commands such as `denote-open-or-create` or similar.
     (unless (file-exists-p absolute-file)
