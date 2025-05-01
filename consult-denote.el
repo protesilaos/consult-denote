@@ -142,6 +142,25 @@ Return the absolute path to the matching file."
     ;; appropriately.
     absolute-file))
 
+(defun consult-denote-sequence-file-prompt (&optional prompt-text files-with-sequences)
+  "A Consult-powered equivalent of `denote-sequence-file-prompt'.
+
+With optional PROMPT-TEXT use it instead of a generic prompt.
+
+With optional FILES-WITH-SEQUENCES as a list of strings, use them as
+completion candidates.  Else use `denote-sequence-get-all-files'."
+  (if-let* ((relative-files (mapcar #'denote-get-file-name-relative-to-denote-directory
+                                    (or files-with-sequences (denote-sequence-get-all-files))))
+            (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
+            (input (consult--read
+                    (denote--completion-table 'file relative-files)
+                    :state (consult--file-preview)
+                    :require-match nil
+                    :history 'denote-sequence-file-history
+                    :prompt prompt)))
+      (expand-file-name input (denote-directory))
+    (error "There are no sequence notes in the `denote-directory'")))
+
 (defun consult-denote-select-linked-file-prompt (files)
   "Prompt for linked file among FILES."
   (let ((file-names (mapcar #'denote-get-file-name-relative-to-denote-directory
@@ -278,14 +297,16 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
         (advice-add #'denote-select-linked-file-prompt :override #'consult-denote-select-linked-file-prompt)
         ;; See FIXME where this function is defined.
         (advice-add #'denote-org-extras-outline-prompt :override #'consult-denote-outline-prompt)
-        (advice-add #'denote-silo-extras-directory-prompt :override #'consult-denote-silo-directory-prompt))
+        (advice-add #'denote-silo-extras-directory-prompt :override #'consult-denote-silo-directory-prompt)
+        (advice-add #'denote-sequence-file-prompt :override #'consult-denote-sequence-file-prompt))
     (dolist (source consult-denote-buffer-sources)
       (setq consult-buffer-sources (delq source consult-buffer-sources)))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-select-linked-file-prompt #'consult-denote-select-linked-file-prompt)
     (advice-remove #'denote-org-extras-outline-prompt #'consult-denote-outline-prompt)
-    (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)))
+    (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)
+    (advice-remove #'denote-sequence-file-prompt #'consult-denote-sequence-file-prompt)))
 
 (provide 'consult-denote)
 ;;; consult-denote.el ends here
