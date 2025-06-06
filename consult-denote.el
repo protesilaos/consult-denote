@@ -207,14 +207,23 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   "Call `consult-denote-grep-command' in the variable `denote-directory'."
   (declare (interactive-only t))
   (interactive)
-  (funcall-interactively consult-denote-grep-command (denote-directory)))
+  (if (denote-has-single-denote-directory-p)
+      (funcall-interactively consult-denote-grep-command (denote-directory))
+    (let* ((directories (mapconcat #'identity (denote-directories) " "))
+           (consult-grep-args `("grep" (consult--grep-exclude-args) "--null --line-buffered --color=never --ignore-case --with-filename --line-number -I -r" ,directories))
+           (consult-ripgrep-args (format "rg --null --line-buffered --color=never --max-columns=1000 --path-separator --smart-case --no-heading --with-filename --line-number --search-zip %s" directories)))
+      (funcall-interactively consult-denote-grep-command))))
 
 ;;;###autoload
 (defun consult-denote-find ()
   "Call `consult-denote-find-command' in the variable `denote-directory'."
   (declare (interactive-only t))
   (interactive)
-  (funcall-interactively consult-denote-find-command (denote-directory)))
+  (if (denote-has-single-denote-directory-p)
+      (funcall-interactively consult-denote-find-command (denote-directory))
+    (let* ((directories (mapconcat #'identity (denote-directories) " "))
+           (consult-find-args  (format "find %s -not ( -path */.[A-Za-z]* -prune )" directories)))
+      (funcall-interactively consult-denote-find-command))))
 
 (consult-customize consult-denote-find :state (consult--file-preview))
 
