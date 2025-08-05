@@ -106,7 +106,7 @@
 
 ;;;; Functions
 
-(defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match)
+(defun consult-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match has-identifier)
   "A Consult-powered equivalent of `denote-file-prompt'.
 
 With optional FILES-MATCHING-REGEXP, filter the candidates per
@@ -117,12 +117,15 @@ select a file.
 
 With optional NO-REQUIRE-MATCH, accept the given input as-is.
 
+With optional HAS-IDENTIFIER, only show candidates that have an
+identifier.
+
 Return the absolute path to the matching file."
   (let* ((relative-files (mapcar
                           #'denote-get-file-name-relative-to-denote-directory
                           (denote-directory-files
                            (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
-                           :omit-current)))
+                           :omit-current nil nil has-identifier)))
          (prompt (format "%s in %s: " (or prompt-text "Select FILE") (denote-directory)))
          (default-directory (denote-directory)) ; needed for the preview
          (input (consult--read

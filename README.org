@@ -174,7 +174,8 @@ matters.
 + Author/maintainer :: Protesilaos Stavrou.
 
 + Ideas and/or user feedback :: Damien Cassou, Jeff Valk, Joost
-  Kremers, Peter Prevos, Samuel Flint, gitrh95, hapst3r.
+  Kremers, Kai von Fintel, Peter Prevos, Samuel Flint, gitrh95,
+  hapst3r.
 
 * COPYING
 :PROPERTIES:
