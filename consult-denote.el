@@ -126,8 +126,8 @@ Return the absolute path to the matching file."
                           (denote-directory-files
                            (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
                            :omit-current nil nil has-identifier)))
-         (prompt (format "%s in %s: " (or prompt-text "Select FILE") (denote-directory)))
          (default-directory (denote-directory)) ; needed for the preview
+         (prompt (format "%s in %s: " (or prompt-text "Select FILE") default-directory))
          (input (consult--read
                  (denote--completion-table 'file relative-files)
                  :state (consult--file-preview)
