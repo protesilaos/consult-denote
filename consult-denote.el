@@ -228,7 +228,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
            (consult-find-args  (format "find %s -not ( -path */.[A-Za-z]* -prune )" directories)))
       (funcall-interactively consult-denote-find-command))))
 
-(consult-customize consult-denote-find :state (consult--file-preview))
+(consult-customize consult-denote-find :sort t :state (consult--file-preview))
 
 ;;;; Integrate with denote.el
 
