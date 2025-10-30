@@ -164,7 +164,6 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
       (expand-file-name input (denote-directory))
     (error "There are no sequence notes in the `denote-directory'")))
 
-(defun consult-denote-select-linked-file-prompt (files)
   "Prompt for linked file among FILES."
   (let ((file-names (mapcar #'denote-get-file-name-relative-to-denote-directory
                             files)))
@@ -174,6 +173,10 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
      :require-match t
      :history 'denote-link-find-file-history
      :prompt "Find linked file")))
+(defun consult-denote-select-linked-file-prompt (files &optional prompt-text)
+  "Prompt for linked file among FILES and use optional PROMPT-TEXT."
+         (prompt (format-prompt (or prompt-text "Find linked file") nil))
+                 :prompt prompt)))
 
 (defun consult-denote-silo-directory-prompt ()
   "Like the `denote-silo-extras-directory-prompt' with Consult preview."
