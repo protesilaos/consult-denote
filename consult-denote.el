@@ -5,7 +5,7 @@
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://github.com/protesilaos/consult-denote
-;; Version: 0.4.1
+;; Version: 0.4.2
 ;; Package-Requires: ((emacs "28.1") (denote "4.0.0") (consult "2.2"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -154,6 +154,9 @@ Return the absolute path to the matching file."
     ;; appropriately.
     absolute-file))
 
+(declare-function denote-sequence-get-all-files "denote-sequence" (&optional files as-sequence-path-pairs))
+(declare-function denote-sequence-get-all-files "denote-sequence" (&optional files as-sequence-path-pairs))
+
 (defun consult-denote-sequence-file-prompt (&optional prompt-text files-with-sequences)
   "A Consult-powered equivalent of `denote-sequence-file-prompt'.
 
@@ -195,6 +198,9 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
         (expand-file-name input (car (denote-directories)))
       input)))
 
+(defvar denote-silo-extras-directory-history)
+(defvar denote-silo-extras-directories)
+
 (defun consult-denote-silo-directory-prompt ()
   "Like the `denote-silo-extras-directory-prompt' with Consult preview."
   (let ((default (car denote-silo-extras-directory-history)))
@@ -206,6 +212,8 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
      :default default
      :history 'denote-silo-extras-directory-history)))
 
+(declare-function denote-org--get-outline "denote-org" (file))
+
 ;; FIXME 2024-07-03: We need a :state function that previews the
 ;; current line in the given buffer and then restores the window
 ;; configuration.
@@ -214,12 +222,12 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
 FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   (let ((current-file (or file buffer-file-name)))
     (consult--read
-     (denote--completion-table-no-sort 'imenu (denote-org-extras--get-outline current-file))
+     (denote--completion-table-no-sort 'imenu (denote-org--get-outline current-file))
      :state (lambda (_action candidate)
               (with-current-buffer (current-buffer)
                 (when-let* ((_ candidate)
                             (line (string-to-number (car (split-string candidate)))))
-                  (goto-line line (get-file-buffer current-file)))))
+                  (forward-line (- line 1)))))
      :prompt (format "Select heading inside `%s': " (propertize (file-name-nondirectory current-file) 'face 'denote-faces-prompt-current-name))
      :require-match t)))
 
@@ -231,7 +239,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   (declare (interactive-only t))
   (interactive)
   (if (denote-has-single-denote-directory-p)
-      (funcall-interactively consult-denote-grep-command (denote-directory))
+      (funcall-interactively consult-denote-grep-command (car (denote-directories)))
     (let* ((directories (mapconcat #'identity (denote-directories) " "))
            (consult-grep-args `("grep" (consult--grep-exclude-args) "--null --line-buffered --color=never --ignore-case --with-filename --line-number -I -r" ,directories))
            (consult-ripgrep-args (format "rg --null --line-buffered --color=never --max-columns=1000 --path-separator --smart-case --no-heading --with-filename --line-number --search-zip %s" directories)))
@@ -243,7 +251,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
   (declare (interactive-only t))
   (interactive)
   (if (denote-has-single-denote-directory-p)
-      (funcall-interactively consult-denote-find-command (denote-directory))
+      (funcall-interactively consult-denote-find-command (car (denote-directories)))
     (let* ((directories (mapconcat #'identity (denote-directories) " "))
            (consult-find-args  (format "find %s -not ( -path */.[A-Za-z]* -prune )" directories)))
       (funcall-interactively consult-denote-find-command))))
@@ -271,7 +279,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
          (lambda (buffer)
            (when-let* ((file (buffer-file-name buffer))
                        ((buffer-live-p buffer))
-                       ((denote-filename-is-note-p file)))
+                       ((denote-file-has-denoted-filename-p file)))
              (buffer-name buffer)))
          (buffer-list))))
 
@@ -314,6 +322,10 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
        :state ,#'consult--file-state
        :items ,denote-silo-extras-directories)))
 
+(declare-function denote-org-outline-prompt "denote-org" (&optional file))
+(declare-function denote-silo-directory-prompt "denote-silo" ())
+(declare-function denote-sequence-file-prompt "denote-sequence" (&optional prompt-text files-with-sequences))
+
 ;;;###autoload
 (define-minor-mode consult-denote-mode
   "Use Consult in tandem with Denote."
@@ -327,15 +339,15 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
         (advice-add #'denote-file-prompt :override #'consult-denote-file-prompt)
         (advice-add #'denote-select-from-files-prompt :override #'consult-denote-select-linked-file-prompt)
         ;; See FIXME where this function is defined.
-        (advice-add #'denote-org-extras-outline-prompt :override #'consult-denote-outline-prompt)
-        (advice-add #'denote-silo-extras-directory-prompt :override #'consult-denote-silo-directory-prompt)
+        (advice-add #'denote-org-outline-prompt :override #'consult-denote-outline-prompt)
+        (advice-add #'denote-silo-directory-prompt :override #'consult-denote-silo-directory-prompt)
         (advice-add #'denote-sequence-file-prompt :override #'consult-denote-sequence-file-prompt))
     (dolist (source consult-denote-buffer-sources)
       (setq consult-buffer-sources (delq source consult-buffer-sources)))
     (advice-remove #'denote-file-prompt #'consult-denote-file-prompt)
     (advice-remove #'denote-select-from-files-prompt #'consult-denote-select-linked-file-prompt)
-    (advice-remove #'denote-org-extras-outline-prompt #'consult-denote-outline-prompt)
-    (advice-remove #'denote-silo-extras-directory-prompt #'consult-denote-silo-directory-prompt)
+    (advice-remove #'denote-org-outline-prompt #'consult-denote-outline-prompt)
+    (advice-remove #'denote-silo-directory-prompt #'consult-denote-silo-directory-prompt)
     (advice-remove #'denote-sequence-file-prompt #'consult-denote-sequence-file-prompt)))
 
 (provide 'consult-denote)
