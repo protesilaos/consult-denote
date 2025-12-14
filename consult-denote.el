@@ -136,7 +136,11 @@ Return the absolute path to the matching file."
                            (or prompt-text "Select FILE")
                            (propertize default-directory 'face 'denote-faces-prompt-current-name))))
          (input (consult--read
-                 (denote-get-completion-table relative-files '(category . file))
+                 (denote-get-completion-table
+                  relative-files
+                  '(category . file)
+                  '(group-function . denote-file-prompt-group)
+                  '(display-sort-function . denote-file-prompt-sort))
                  :state (consult--file-preview)
                  :require-match (unless no-require-match :require-match)
                  :history 'denote-file-history
@@ -171,7 +175,11 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                               files))
             (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
             (input (consult--read
-                    (denote-get-completion-table relative-files '(category . file))
+                    (denote-get-completion-table
+                     relative-files
+                     '(category . file)
+                     '(group-function . denote-file-prompt-group)
+                     '(display-sort-function . denote-file-prompt-sort))
                     :state (consult--file-preview)
                     :require-match nil
                     :history 'denote-sequence-file-history
@@ -184,12 +192,16 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
 (defun consult-denote-select-linked-file-prompt (files &optional prompt-text)
   "Prompt for linked file among FILES and use optional PROMPT-TEXT."
   (let* ((single-dir-p (denote-has-single-denote-directory-p))
-         (file-names (if single-dir-p
-                         (mapcar #'denote-get-file-name-relative-to-denote-directory files)
-                       files))
+         (relative-files (if single-dir-p
+                             (mapcar #'denote-get-file-name-relative-to-denote-directory files)
+                           files))
          (prompt (format-prompt (or prompt-text "Find linked file") nil))
          (input (consult--read
-                 (denote-get-completion-table file-names '(category . file))
+                 (denote-get-completion-table
+                  relative-files
+                  '(category . file)
+                  '(group-function . denote-file-prompt-group)
+                  '(display-sort-function . denote-file-prompt-sort))
                  :state (consult--file-preview)
                  :require-match t
                  :history 'denote-link-find-file-history
@@ -312,15 +324,15 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
 
 (with-eval-after-load 'denote-silo-extras
   (setq consult-denote-silo-source
-    `( :name "Denote silos"
-       :narrow ?L
-       :category file
-       :default t
-       :face consult-denote-directory
-       :history consult-denote-buffer-history
-       :action ,#'dired
-       :state ,#'consult--file-state
-       :items ,denote-silo-extras-directories)))
+        `( :name "Denote silos"
+           :narrow ?L
+           :category file
+           :default t
+           :face consult-denote-directory
+           :history consult-denote-buffer-history
+           :action ,#'dired
+           :state ,#'consult--file-state
+           :items ,denote-silo-extras-directories)))
 
 (declare-function denote-org-outline-prompt "denote-org" (&optional file))
 (declare-function denote-silo-directory-prompt "denote-silo" ())
