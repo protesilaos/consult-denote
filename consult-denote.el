@@ -121,10 +121,11 @@ With optional HAS-IDENTIFIER, only show candidates that have an
 identifier.
 
 Return the absolute path to the matching file."
-  (let* ((single-dir-p (denote-has-single-denote-directory-p))
+  (let* ((roots (denote-directories))
+         (single-dir-p (null (cdr roots)))
          (default-directory (if single-dir-p ; setting the `default-directory' is needed for the preview
-                                (car (denote-directories))
-                              (denote-directories-get-common-root)))
+                                (car roots)
+                              (denote-directories-get-common-root roots)))
          (relative-files (mapcar
                           #'denote-get-file-name-relative-to-denote-directory
                           (denote-directory-files
@@ -165,7 +166,8 @@ With optional PROMPT-TEXT use it instead of a generic prompt.
 With optional FILES-WITH-SEQUENCES as a list of strings, use them as
 completion candidates.  Else use `denote-sequence-get-all-files'."
   (if-let* ((files (or files-with-sequences (denote-sequence-get-all-files)))
-            (single-dir-p (denote-has-single-denote-directory-p))
+            (roots (denote-directories))
+            (single-dir-p (null (cdr roots)))
             (relative-files (if single-dir-p
                                 (mapcar #'denote-get-file-name-relative-to-denote-directory files)
                               files))
@@ -177,13 +179,14 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                     :history 'denote-sequence-file-history
                     :prompt prompt)))
       (if single-dir-p
-          (expand-file-name input (car (denote-directories)))
+          (expand-file-name input (car roots))
         input)
     (error "There are no sequence notes in the `denote-directory'")))
 
 (defun consult-denote-select-linked-file-prompt (files &optional prompt-text)
   "Prompt for linked file among FILES and use optional PROMPT-TEXT."
-  (let* ((single-dir-p (denote-has-single-denote-directory-p))
+  (let* ((roots (denote-directories))
+         (single-dir-p (null (cdr roots)))
          (relative-files (if single-dir-p
                              (mapcar #'denote-get-file-name-relative-to-denote-directory files)
                            files))
@@ -195,7 +198,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                  :history 'denote-link-find-file-history
                  :prompt prompt)))
     (if single-dir-p
-        (expand-file-name input (car (denote-directories)))
+        (expand-file-name input (car roots))
       input)))
 
 (defvar denote-silo-directory-history)
