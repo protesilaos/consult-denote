@@ -136,11 +136,7 @@ Return the absolute path to the matching file."
                            (or prompt-text "Select FILE")
                            (propertize default-directory 'face 'denote-faces-prompt-current-name))))
          (input (consult--read
-                 (denote-get-completion-table
-                  relative-files
-                  '(category . file)
-                  '(group-function . denote-file-prompt-group)
-                  '(display-sort-function . denote-file-prompt-sort))
+                 (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
                  :state (consult--file-preview)
                  :require-match (unless no-require-match :require-match)
                  :history 'denote-file-history
@@ -175,11 +171,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                               files))
             (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
             (input (consult--read
-                    (denote-get-completion-table
-                     relative-files
-                     '(category . file)
-                     '(group-function . denote-file-prompt-group)
-                     '(display-sort-function . denote-file-prompt-sort))
+                    (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
                     :state (consult--file-preview)
                     :require-match nil
                     :history 'denote-sequence-file-history
@@ -197,11 +189,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                            files))
          (prompt (format-prompt (or prompt-text "Find linked file") nil))
          (input (consult--read
-                 (denote-get-completion-table
-                  relative-files
-                  '(category . file)
-                  '(group-function . denote-file-prompt-group)
-                  '(display-sort-function . denote-file-prompt-sort))
+                 (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
                  :state (consult--file-preview)
                  :require-match t
                  :history 'denote-link-find-file-history
