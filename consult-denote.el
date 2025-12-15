@@ -198,19 +198,19 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
         (expand-file-name input (car (denote-directories)))
       input)))
 
-(defvar denote-silo-extras-directory-history)
-(defvar denote-silo-extras-directories)
+(defvar denote-silo-directory-history)
+(defvar denote-silo-directories)
 
 (defun consult-denote-silo-directory-prompt ()
-  "Like the `denote-silo-extras-directory-prompt' with Consult preview."
-  (let ((default (car denote-silo-extras-directory-history)))
+  "Like the `denote-silo-directory-prompt' with Consult preview."
+  (let ((default (car denote-silo-directory-history)))
     (consult--read
-     (denote-get-completion-table denote-silo-extras-directories '(category . file))
+     (denote-get-completion-table denote-silo-directories '(category . file))
      :state (consult--file-preview)
      :require-match t
      :prompt (format-prompt "Select a silo" default)
      :default default
-     :history 'denote-silo-extras-directory-history)))
+     :history 'denote-silo-directory-history)))
 
 (declare-function denote-org--get-outline "denote-org" (file))
 
