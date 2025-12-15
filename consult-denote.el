@@ -165,23 +165,28 @@ With optional PROMPT-TEXT use it instead of a generic prompt.
 
 With optional FILES-WITH-SEQUENCES as a list of strings, use them as
 completion candidates.  Else use `denote-sequence-get-all-files'."
-  (if-let* ((files (or files-with-sequences (denote-sequence-get-all-files)))
-            (roots (denote-directories))
-            (single-dir-p (null (cdr roots)))
-            (relative-files (if single-dir-p
-                                (mapcar #'denote-get-file-name-relative-to-denote-directory files)
-                              files))
-            (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
-            (input (consult--read
-                    (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
-                    :state (consult--file-preview)
-                    :require-match nil
-                    :history 'denote-sequence-file-history
-                    :prompt prompt)))
-      (if single-dir-p
-          (expand-file-name input (car roots))
-        input)
-    (error "There are no sequence notes in the `denote-directory'")))
+  (let* ((roots (denote-directories))
+         (single-dir-p (null (cdr roots)))
+         ;; Some external program may use `default-directory' with the
+         ;; relative file paths of the completion candidates.
+         (default-directory (if single-dir-p
+                                (car roots)
+                              (denote-directories-get-common-root roots))))
+    (if-let* ((files (or files-with-sequences (denote-sequence-get-all-files)))
+              (relative-files (if single-dir-p
+                                  (mapcar #'denote-get-file-name-relative-to-denote-directory files)
+                                files))
+              (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
+              (input (consult--read
+                      (apply 'denote-get-completion-table relative-files denote-sequence-file-prompt-extra-metadata)
+                      :state (consult--file-preview)
+                      :require-match nil
+                      :history 'denote-sequence-file-history
+                      :prompt prompt)))
+        (if single-dir-p
+            (expand-file-name input (car roots))
+          input)
+      (error "There are no sequence notes in the `denote-directory'"))))
 
 (defun consult-denote-select-linked-file-prompt (files &optional prompt-text)
   "Prompt for linked file among FILES and use optional PROMPT-TEXT."
