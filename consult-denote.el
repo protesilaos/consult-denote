@@ -126,11 +126,13 @@ Return the absolute path to the matching file."
          (default-directory (if single-dir-p ; setting the `default-directory' is needed for the preview
                                 (car roots)
                               (denote-directories-get-common-root roots)))
+         (files (denote-directory-files
+                 (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
+                 :omit-current nil nil roots))
          (relative-files (mapcar
-                          #'denote-get-file-name-relative-to-denote-directory
-                          (denote-directory-files
-                           (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
-                           :omit-current nil nil has-identifier)))
+                          (lambda (file)
+                            (denote-get-file-name-relative-to-denote-directory file roots))
+                          files))
          (prompt (if single-dir-p
                      (format "%s: " (or prompt-text "Select FILE"))
                    (format "%s in %s: "
@@ -174,7 +176,10 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                               (denote-directories-get-common-root roots))))
     (if-let* ((files (or files-with-sequences (denote-sequence-get-all-files)))
               (relative-files (if single-dir-p
-                                  (mapcar #'denote-get-file-name-relative-to-denote-directory files)
+                                  (mapcar
+                                   (lambda (file)
+                                     (denote-get-file-name-relative-to-denote-directory file roots))
+                                   files)
                                 files))
               (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
               (input (consult--read
@@ -193,7 +198,10 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
   (let* ((roots (denote-directories))
          (single-dir-p (null (cdr roots)))
          (relative-files (if single-dir-p
-                             (mapcar #'denote-get-file-name-relative-to-denote-directory files)
+                             (mapcar
+                              (lambda (file)
+                                (denote-get-file-name-relative-to-denote-directory file roots))
+                              files)
                            files))
          (prompt (format-prompt (or prompt-text "Find linked file") nil))
          (input (consult--read
