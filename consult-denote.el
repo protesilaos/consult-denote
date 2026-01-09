@@ -125,7 +125,7 @@ Return the absolute path to the matching file."
          (single-dir-p (null (cdr roots)))
          (default-directory (if single-dir-p ; setting the `default-directory' is needed for the preview
                                 (car roots)
-                              (denote-directories-get-common-root roots)))
+                              (denote-directories-get-common-root)))
          (files (denote-directory-files
                  (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
                  :omit-current nil nil roots))
@@ -173,7 +173,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
          ;; relative file paths of the completion candidates.
          (default-directory (if single-dir-p
                                 (car roots)
-                              (denote-directories-get-common-root roots))))
+                              (denote-directories-get-common-root))))
     (if-let* ((files (or files-with-sequences (denote-sequence-get-all-files)))
               (relative-files (if single-dir-p
                                   (mapcar
