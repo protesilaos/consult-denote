@@ -131,7 +131,7 @@ Return the absolute path to the matching file."
                  :omit-current nil nil roots))
          (relative-files (mapcar
                           (lambda (file)
-                            (denote-get-file-name-relative-to-denote-directory file roots))
+                            (denote-get-file-name-relative-to-denote-directory file))
                           files))
          (prompt (if single-dir-p
                      (format "%s: " (or prompt-text "Select FILE"))
@@ -178,7 +178,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
               (relative-files (if single-dir-p
                                   (mapcar
                                    (lambda (file)
-                                     (denote-get-file-name-relative-to-denote-directory file roots))
+                                     (denote-get-file-name-relative-to-denote-directory file))
                                    files)
                                 files))
               (prompt (format-prompt (or prompt-text "Select FILE with sequence") nil))
@@ -200,7 +200,7 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
          (relative-files (if single-dir-p
                              (mapcar
                               (lambda (file)
-                                (denote-get-file-name-relative-to-denote-directory file roots))
+                                (denote-get-file-name-relative-to-denote-directory file))
                               files)
                            files))
          (prompt (format-prompt (or prompt-text "Find linked file") nil))
