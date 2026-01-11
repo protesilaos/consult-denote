@@ -241,9 +241,10 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
      (denote-get-completion-table (denote-org--get-outline current-file) '(category . imenu))
      :state (lambda (_action candidate)
               (with-current-buffer (current-buffer)
-                (when-let* ((_ candidate)
-                            (line (string-to-number (car (split-string candidate)))))
-                  (forward-line (- line 1)))))
+                (save-excursion
+                  (when-let* ((_ candidate)
+                              (line (string-to-number (car (split-string candidate)))))
+                    (forward-line (- line 1))))))
      :prompt (format "Select heading inside `%s': " (propertize (file-name-nondirectory current-file) 'face 'denote-faces-prompt-current-name))
      :require-match t)))
 
