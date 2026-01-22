@@ -55,7 +55,7 @@
 ;;    the interface of the `consult-buffer` command.  Those lists (i) the
 ;;    buffers that visit Denote files, (ii) the subdirectories of the
 ;;    `denote-directory', and (iii) the silos listed in the value of the
-;;    user option `denote-silo-extras-directories' (for those who opt in
+;;    user option `denote-silo-directories' (for those who opt in
 ;;    to that extension).
 ;;
 ;; In the future we may use other features of Consult, based on user
@@ -234,8 +234,8 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
 ;; current line in the given buffer and then restores the window
 ;; configuration.
 (defun consult-denote-outline-prompt (&optional file)
-  "Like `denote-org-extras-outline-prompt' with Consult preview.
-FILE has the same meaning as in `denote-org-extras-outline-prompt'."
+  "Like `denote-org-outline-prompt' with Consult preview.
+FILE has the same meaning as in `denote-org-outline-prompt'."
   (let ((current-file (or file buffer-file-name)))
     (consult--read
      (denote-get-completion-table (denote-org--get-outline current-file) '(category . imenu))
@@ -327,7 +327,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
 (defvar consult-denote-silo-source nil
   "Source for `consult-buffer' to list Denote silos.")
 
-(with-eval-after-load 'denote-silo-extras
+(with-eval-after-load 'denote-silo
   (setq consult-denote-silo-source
         `( :name "Denote silos"
            :narrow ?L
@@ -337,7 +337,7 @@ FILE has the same meaning as in `denote-org-extras-outline-prompt'."
            :history consult-denote-buffer-history
            :action ,#'dired
            :state ,#'consult--file-state
-           :items ,denote-silo-extras-directories)))
+           :items ,denote-silo-directories)))
 
 (declare-function denote-org-outline-prompt "denote-org" (&optional file))
 (declare-function denote-silo-directory-prompt "denote-silo" ())
