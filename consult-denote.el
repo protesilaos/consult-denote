@@ -129,9 +129,11 @@ Return the absolute path to the matching file."
          (files (denote-directory-files
                  (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
                  :omit-current nil nil roots))
-         (relative-files (mapcar
-                          (lambda (file)
-                            (denote-get-file-name-relative-to-denote-directory file))
+         (relative-files (if single-dir-p
+                            (mapcar
+                             (lambda (file)
+                               (denote-get-file-name-relative-to-denote-directory file))
+                             files)
                           files))
          (prompt (if single-dir-p
                      (format "%s: " (or prompt-text "Select FILE"))
