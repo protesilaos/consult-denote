@@ -86,8 +86,8 @@ The purpose of ~consult-denote~ is as follows:
   sections in its presentation. Those include a group for Denote
   buffers, another with subdirectories of the ~denote-directory~, and
   a third with the user-defined Denote silos (for those user option
-  ~denote-silo-extras-directories~ (for those who opt in to that
-  extension, as described in the Denote manual). The user option
+  ~denote-silo-directories~ (for those who opt in to that extension,
+  as described in the Denote manual). The user option
   ~consult-denote-buffer-sources~ can be configured to control which
   sources are added to ~consult-buffer~.
 
