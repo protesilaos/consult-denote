@@ -1,5 +1,5 @@
 #+title: Change log of consult-denote
-#+author: Protesilaos Stavrou
+#+author: Protesilaos
 #+email: info@protesilaos.com
 #+language: en
 #+options: ':t toc:nil author:t email:t num:t
