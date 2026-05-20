@@ -4,9 +4,9 @@
 #+language: en
 #+options: ':t toc:nil author:t email:t num:t
 #+startup: content
-#+macro: stable-version 0.4.0
-#+macro: release-date 2025-04-15
-#+macro: development-version 0.5.0-dev
+#+macro: stable-version 0.5.0
+#+macro: release-date 2026-05-20
+#+macro: development-version 0.6.0-dev
 #+export_file_name: consult-denote.texi
 #+texinfo_filename: consult-denote.info
 #+texinfo_dir_category: Emacs misc features
@@ -19,10 +19,10 @@
 
 #+texinfo: @insertcopying
 
-This manual, written by Protesilaos, describes the
-customization options for the Emacs package called ~consult-denote~
-(or =consult-denote.el=), and provides every other piece of
-information pertinent to it.
+This manual, written by Protesilaos, describes the customization
+options for the Emacs package called ~consult-denote~ (or
+=consult-denote.el=), and provides every other piece of information
+pertinent to it.
 
 The documentation furnished herein corresponds to stable version
 {{{stable-version}}}, released on {{{release-date}}}.  Any reference to
