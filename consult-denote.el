@@ -141,7 +141,9 @@ Return the absolute path to the matching file."
                            (or prompt-text "Select FILE")
                            (propertize default-directory 'face 'denote-faces-prompt-current-name))))
          (input (consult--read
-                 (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
+                 (if denote-fancy-file-prompt
+                     (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
+                   relative-files)
                  :state (consult--file-preview)
                  :require-match (unless no-require-match :require-match)
                  :history 'denote-file-history
@@ -207,7 +209,9 @@ completion candidates.  Else use `denote-sequence-get-all-files'."
                            files))
          (prompt (format-prompt (or prompt-text "Find linked file") nil))
          (input (consult--read
-                 (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
+                 (if denote-fancy-file-prompt
+                     (apply 'denote-get-completion-table relative-files denote-file-prompt-extra-metadata)
+                   relative-files)
                  :state (consult--file-preview)
                  :require-match t
                  :history 'denote-link-find-file-history
