@@ -261,7 +261,7 @@ FILE has the same meaning as in `denote-org-outline-prompt'."
   (if (denote-has-single-denote-directory-p)
       denote-directory
     (completing-read
-     "`denote-directory' is a list; select one directory: "
+     "`denote-directory' is a list; select a directory: "
      (denote-get-completion-table (denote-directories) '(category . file))
      nil t)))
 
