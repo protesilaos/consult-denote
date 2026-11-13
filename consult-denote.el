@@ -128,7 +128,7 @@ Return the absolute path to the matching file."
                               (denote-directories-get-common-root)))
          (files (denote-directory-files
                  (or denote-file-prompt-use-files-matching-regexp files-matching-regexp)
-                 :omit-current nil nil roots))
+                 :omit-current nil denote-file-prompt-use-exclude-regexp roots))
          (relative-files (if single-dir-p
                             (mapcar
                              (lambda (file)
